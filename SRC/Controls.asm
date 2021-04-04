@@ -12,9 +12,6 @@ ScanUp:
 ld bc, ROW_TREWQ ; en BC se carga la dirección completa donde está la fila del teclado
 in a,(c) ; a la instrucción IN solo se le pasa la parte explicitamente el registro C porque
 ; la parte que está en el registro B ya está implícita
-
-LD HL, $4000       ; Prueba en primera linea de pantalla
-LD (HL), a
 rra ; nos quedamos con el valor del bit más bajo
 jr c, NothingPressed ; si hay carry significa que la tecla no estaba pulsada
 

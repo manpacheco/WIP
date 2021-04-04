@@ -9,7 +9,9 @@ ld a,1 ; 1 is the code for blue
 out (254),a
 
 MainLoop:
-call PrintSprite8x8
+;call PrintSprite8x8
+ld bc, 16 ;  0000 0000 0001 0000 -> b=16 c=0
+call PrintSprite8x8At
 call ScanAllKeys
 jr MainLoop
 
