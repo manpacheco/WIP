@@ -10,7 +10,7 @@ out (254),a
 
 MainLoop:
 ;call PrintSprite8x8
-ld bc, 16 ;  0000 0000 0001 0000 -> b=16 c=0
+ld bc, $0035 ; ejemplo con b=21
 call PrintSprite8x8At
 call ScanAllKeys
 jr MainLoop

@@ -28,18 +28,12 @@ ret
 ; MODIFICA REGISTROS: A[X] B[X], C[X], D[X], E[X], H[X], L[X], IX[ ], IY[ ]
 ;
 PrintSprite8x8At:
-
-
-;; INTENTAR DEPURAR QUÉ VALORES LLEGAN
-
-rr b ; 
-rr b ;
-rr b ;
+ld a, c
+sra c ; desplazamiento aritmético - no interesa lo que se pierde
+sra c ;
+sra c ;
 ; push b ; EN B VA EL OFFSET DEL SPRITE? 
-
-;LD HL, $4000       ; Prueba en primera linea de pantalla
-;LD (HL), b
-
+and 7 ; Se deja en el registro A solo los 3 bits del offset
 
 LD HL, VRAM_ADDRESS       ; Prueba en primera linea de pantalla
 ;ld bc, 1
