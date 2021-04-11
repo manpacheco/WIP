@@ -1,5 +1,6 @@
 VRAM_ADDRESS EQU 16384
-
+Offset_X: DEFB 0
+IteradorVertical: DEFB 0
 
 ; PRESUPONE QUE EL TAMAÑO ES DE 8X8
 ; PARAMETROS:
@@ -10,8 +11,7 @@ VRAM_ADDRESS EQU 16384
 ;
 
 PrintSprite8x8At:
-ld bc, posicion_x
-nop
+;ld bc, posicion_x
 ld hl, posicion_x 			; carga el puntero a posicion_x en hl
 ld c,(hl) 					; carga el valor de posicion_x en c
 ld hl, posicion_y			; carga el puntero a posicion_y en hl
@@ -28,9 +28,6 @@ ld b, 0						; la parte alta del offset va a cero, la parte baja viene en c resu
 ADD HL, bc					; añade al inicio de la memoria de video el offset x del sprite
 
 LD ix, Spritemap8x8 		; carga en IX la direccion del mapa de sprites
-LD b, 8						; carga en B las 8 iteraciones del tamaño vertical
-
-
 
 LoopPrintSprite8x8At:
 ld (IteradorVertical), bc
@@ -38,26 +35,4 @@ ld a, (Offset_X)			; carga en A el offset_x
 LD d, (ix)					; carga en b el byte de la memoria en la direccion apuntada por ix (los datos del sprite)
 ld c, 0						; carga en c 0
 
-LoopPrintSprite8x8AtOffset:
-
-;out (254),a				; colorea borde color a
-CP $0						; compara a con 0
-JR Z, OffsetTerminado		; si es 0 salta a offset terminado
-dec a						; si no se ha terminado, decrementa el contador a
-SRL d 						; shit 16 bits
-RR c						; shift 16 bits
-JR LoopPrintSprite8x8AtOffset
-
-OffsetTerminado:
-
-LD (HL), d					; carga en la dirección apuntada por HL, teóricamente el byte de la izquierda del sprite
-INC L						; incrementa la columna
-LD (HL), c					; carga en la dirección apuntada por HL, teóricamente el byte de la derecha del sprite
-DEC L						; deja L como estaba
-INC H						; incrementa H, que significa pasar al siguiente scanline
-INC ix						; incrementa ix, que significa pasar a la siguiente línea del sprite
-ld bc, (IteradorVertical)	; carga en b el iterador vertical
-DJNZ LoopPrintSprite8x8At 	; Decreases B and jumps to a label if not zero
-
 ret
-

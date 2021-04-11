@@ -1,4 +1,5 @@
 @echo off
+del wip.tap
 cd src
 pasmo --name wip --tapbas Main.asm ..\wip.tap --public
 cd ..

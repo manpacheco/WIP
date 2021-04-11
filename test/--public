@@ -1,0 +1,9 @@
+IteradorVertical EQU 08007H
+LoopPrintSprite8x8At EQU 08026H
+Main		EQU 08000H
+Offset_X	EQU 08006H
+PrintSprite8x8At EQU 08008H
+Spritemap8x8	EQU 08033H
+VRAM_ADDRESS	EQU 04000H
+posicion_x	EQU 08004H
+posicion_y	EQU 08005H

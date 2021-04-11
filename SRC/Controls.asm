@@ -16,7 +16,17 @@ rra ; nos quedamos con el valor del bit más bajo
 jr c, NothingPressed ; si hay carry significa que la tecla no estaba pulsada
 
 UpPressed:
+ld hl, posicion_x
+ld b, (hl)
+inc b
+ld (hl), b
+halt
 ld a,6 ; yellow
+out (254),a
+halt
+ld a,6 ; yellow
+out (254),a
+
 jr ScanUpFinally
 
 NothingPressed:
@@ -24,7 +34,6 @@ ld a,5 ; magenta
 
 ScanUpFinally:
 out (254),a
-
 ret
 
 
