@@ -10,16 +10,14 @@ VRAM_ADDRESS EQU 16384
 ;
 
 PrintSprite8x8At:
-ld bc, posicion_x
-nop
 ld hl, posicion_x 			; carga el puntero a posicion_x en hl
 ld c,(hl) 					; carga el valor de posicion_x en c
 ld hl, posicion_y			; carga el puntero a posicion_y en hl
 ld b,(hl)					; carga el valor de posicion_y en b
 ld a, c 					; tomamos el parámetro X que viene en el registro C y lo guardamos en el registro A
-sra c 						; desplazamiento aritmético - no interesa lo que se pierde porque está duplicado en A
-sra c 
-sra c 
+srl c 						; desplazamiento aritmético - no interesa lo que se pierde porque está duplicado en A
+srl c 
+srl c 
 and 7						; Se deja en el registro A solo los 3 bits del offset del valor de X
 
 ld (Offset_X), a			; Guarda en memoria el offset_x que está contenido en A
