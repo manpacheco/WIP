@@ -1,4 +1,5 @@
 VRAM_ADDRESS EQU 16384
+MAX_OFFSET_X EQU 192
 
 
 ; PRESUPONE QUE EL TAMAÑO ES DE 8X8
@@ -10,7 +11,17 @@ VRAM_ADDRESS EQU 16384
 ;
 
 PrintSprite8x8At:
-ld hl, posicion_x 			; carga el puntero a posicion_x en hl
+ld hl, (posicion_x) 			; carga el puntero a posicion_x en hl
+ld a, MAX_OFFSET_X
+cp l ; a-l = MAX_OFFSET_X - posicion x = 175 -180
+JP NC, Max_Offset_x_Adjusted
+ld h, a
+ld a, l
+sub h ; A=A-h = 
+ld (posicion_x),a
+
+Max_Offset_x_Adjusted:
+ld hl, posicion_x 			; carga de nuevo el puntero a posicion_x en hl
 ld c,(hl) 					; carga el valor de posicion_x en c
 ld hl, posicion_y			; carga el puntero a posicion_y en hl
 ld b,(hl)					; carga el valor de posicion_y en b

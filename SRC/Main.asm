@@ -7,7 +7,7 @@ call 3503
 
 ld a,1 ; 1 is the code for blue
 out (254),a
-ld a,128
+ld a,0
 ld (posicion_x),a
 xor a
 ld (posicion_y),a
