@@ -30,7 +30,7 @@ out (254),a
 jr ScanUpFinally
 
 NothingPressed:
-ld a,5 ; magenta
+ld a,3 ; magenta
 
 ScanUpFinally:
 out (254),a

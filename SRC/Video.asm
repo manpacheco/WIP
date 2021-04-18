@@ -1,5 +1,9 @@
 VRAM_ADDRESS EQU 16384
-MAX_OFFSET_X EQU 192
+;MAX_OFFSET_X EQU 191
+MAX_OFFSET_X EQU 120
+MAX_COLUMN_NUMBER EQU 31
+MAX_ROW_NUMBER EQU 23
+START_ATTRIBUTE_DATA EQU 22528
 
 
 ; PRESUPONE QUE EL TAMAÑO ES DE 8X8
@@ -70,3 +74,38 @@ DJNZ LoopPrintSprite8x8At 	; Decreases B and jumps to a label if not zero
 
 ret
 
+printScoreboard:
+
+	ld hl, START_ATTRIBUTE_DATA
+	ld b, 0 ; índice de columna
+
+		printScoreIterateRows:
+
+			ld e, MAX_OFFSET_X
+			srl e
+			srl e
+			srl e
+			ld a, MAX_COLUMN_NUMBER
+
+			inc e
+			ld d,0
+			add hl, de
+
+				printScoreboardLoop:
+					ld (hl), 40
+					inc e
+					inc l
+					call z, IncrementRegisterH
+					cp e
+				jr nc, printScoreboardLoop 
+
+			ld a, MAX_ROW_NUMBER
+			inc b
+			cp b
+		jr NZ, printScoreIterateRows
+
+	ret
+
+IncrementRegisterH:
+inc h
+ret

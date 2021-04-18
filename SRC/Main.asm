@@ -15,7 +15,7 @@ ld (posicion_y),a
 
 ;ld bc, $0009 ; 
 
-
+call printScoreboard
 MainLoop:
 call PrintSprite8x8At
 call ScanAllKeys
