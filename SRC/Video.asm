@@ -1,6 +1,5 @@
 VRAM_ADDRESS EQU 16384
-;MAX_OFFSET_X EQU 191
-MAX_OFFSET_X EQU 120
+MAX_OFFSET_X EQU 191
 MAX_COLUMN_NUMBER EQU 31
 MAX_ROW_NUMBER EQU 23
 START_ATTRIBUTE_DATA EQU 22528
@@ -76,35 +75,33 @@ ret
 
 printScoreboard:
 
-	ld hl, START_ATTRIBUTE_DATA
-	ld b, 0 ; índice de columna
+ld hl, START_ATTRIBUTE_DATA	; carga en hl el puntero a la zona de los atributos en la zona de RAM de la pantalla
+ld b, 0 					; índice de columna - empieza a 0
 
-		printScoreIterateRows:
+printScoreIterateRows:
+ld e, MAX_OFFSET_X			; carga en el registro E el valor x tope de la zona de juego
+srl e						; se divide entre 8 para obtener el equivalente en columna
+srl e						; se divide entre 8 para obtener el equivalente en columna
+srl e						; se divide entre 8 para obtener el equivalente en columna
+ld a, MAX_COLUMN_NUMBER		; carga en el registro A el valor x máximo de toda la pantalla (en caracteres)
+inc e						; suma 1 al tope de la zona de juego para apuntar al primero de la zona de marcador
+ld d,0						; carga 0 en d para que en los 16 bits de DE esté la coordenada X del primer bloque de la zona de marcador
+add hl, de					; al puntero a la zona de los atributos le añades la coordenada X para apuntar a la zona del marcador
 
-			ld e, MAX_OFFSET_X
-			srl e
-			srl e
-			srl e
-			ld a, MAX_COLUMN_NUMBER
+printScoreboardLoop:
+ld (hl), 40					; carga 40 (papel cyan) en la dirección de memoria apuntada por HL
+inc e						; incrementa el contador
+inc l						; incrementa la parte baja del puntero
+call z, IncrementRegisterH	; si se pone a cero llamar a incrementar H (como si fuera un carry)
+cp e						; compara el contador con el registro A que contiene ????????
+jr nc, printScoreboardLoop 
 
-			inc e
-			ld d,0
-			add hl, de
+ld a, MAX_ROW_NUMBER
+inc b
+cp b
+jr NC, printScoreIterateRows
 
-				printScoreboardLoop:
-					ld (hl), 40
-					inc e
-					inc l
-					call z, IncrementRegisterH
-					cp e
-				jr nc, printScoreboardLoop 
-
-			ld a, MAX_ROW_NUMBER
-			inc b
-			cp b
-		jr NZ, printScoreIterateRows
-
-	ret
+ret
 
 IncrementRegisterH:
 inc h

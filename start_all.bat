@@ -1,0 +1,2 @@
+@echo off
+"C:\Mis programas\NPPP\7_8_9\notepad++.exe" "C:\Users\Manuel\Desktop\Proyecto ASM\WIP\SRC\Controls.asm" "C:\Users\Manuel\Desktop\Proyecto ASM\WIP\SRC\Game.asm" "C:\Users\Manuel\Desktop\Proyecto ASM\WIP\SRC\Video.asm" "C:\Users\Manuel\Desktop\Proyecto ASM\WIP\SRC\Sprite.asm" "C:\Users\Manuel\Desktop\Proyecto ASM\WIP\SRC\Main.asm"
