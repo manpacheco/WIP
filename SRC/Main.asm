@@ -7,9 +7,9 @@ call 3503
 
 ld a,1 ; 1 is the code for blue
 out (254),a
-ld a,0
+ld a,188
 ld (posicion_x),a
-xor a
+ld a, 5
 ld (posicion_y),a
 
 
@@ -29,6 +29,3 @@ include "Sprite.asm"
 include "Controls.asm"
 
 end Main
-
-; ojo: OFFSET_X no es lo mismo que posicion_x
-; NOTA: al llegar a posicion_x = 16+ sale por otra scanline :O
