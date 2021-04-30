@@ -9,7 +9,7 @@ ld a,1 ; 1 is the code for blue
 out (254),a
 ld a,188
 ld (posicion_x),a
-ld a, 5
+ld a, 8
 ld (posicion_y),a
 
 

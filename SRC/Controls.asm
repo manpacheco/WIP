@@ -33,8 +33,8 @@ ScanDown:
 ld bc, ROW_GFDSA			; en BC se carga la dirección completa donde está la fila del teclado
 in a,(c)					; a la instrucción IN solo se le pasa la parte explicitamente el registro C porque la parte que está en el registro B ya está implícita
 rra							; nos quedamos con el valor del bit más bajo
-jr c, ScanRight		; si hay carry significa que la tecla no estaba pulsada
-ld hl, posicion_y
+jr c, ScanRight				; si hay carry significa que la tecla no estaba pulsada
+ld hl, posicion_y 		
 ld b, (hl)
 inc b
 ld (hl), b
@@ -49,7 +49,7 @@ ScanRight:
 ld bc, ROW_YUIOP			; en BC se carga la dirección completa donde está la fila del teclado
 in a,(c)					; a la instrucción IN solo se le pasa la parte explicitamente el registro C porque la parte que está en el registro B ya está implícita
 rra							; nos quedamos con el valor del bit más bajo
-jr c, ScanLeft		; si hay carry significa que la tecla no estaba pulsada
+jr c, ScanLeft				; si hay carry significa que la tecla no estaba pulsada
 ld hl, posicion_x
 ld b, (hl)
 inc b
@@ -66,7 +66,7 @@ ld bc, ROW_YUIOP			; en BC se carga la dirección completa donde está la fila d
 in a,(c)					; a la instrucción IN solo se le pasa la parte explicitamente el registro C porque la parte que está en el registro B ya está implícita
 bit 1,a						; nos quedamos con el valor del 2º bit más bajo
 jr nz, NothingPressed		; si no es cero significa que la tecla no estaba pulsada
-ld hl, posicion_x
+ld hl, posicion_x 			
 ld b, (hl)
 ld a, 0
 cp b

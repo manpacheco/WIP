@@ -17,6 +17,12 @@ START_ATTRIBUTE_DATA EQU 22528
 ;################################### PrintSprite8x8At ###################################################
 ;########################################################################################################
 PrintSprite8x8At:
+nop
+ld hl, $5800
+nop
+ld (hl), 79
+nop
+
 call insertaPrimeraColumnaMarcadorEnRegistroE
 
 ld hl, (posicion_x) 				; carga el puntero a posicion_x en hl
@@ -39,38 +45,37 @@ srl c 								; desplazamiento aritmético - no interesa lo que se pierde porque
 srl c 		
 srl c 		
 
+
+;;;; SEGUIR POR AQUI C VALE 17 pero al hacer los 3 desplazamientos algo se pierde: trazar
+
+
 ld hl, posicion_y					; carga el puntero a posicion_y en el registro HL
 ld b,(hl)							; carga el valor de posicion_y en el registro B
 ld hl, VRAM_ADDRESS					; Prueba en primera linea de pantalla
-;ld b, 0								; la parte alta del offset va a cero, la parte baja viene en c resultado de hacer 3 desplazamientos a la derecha >>>
+
+ld a, b								; PRIMERA PARTE: la sección NNN, se pasa la posicion Y desde el registro B al registro A
+and 56								; 0011 1000
+add a,a								; se desplaza a la izquierda (multiplicando x2).
+add a,a								; se desplaza a la izquierda (multiplicando x2). El desplazamiento acumulado son 2 bits
+ex af, af'							; en el registro A está NNN0 0000 y se pasa al A`
 
 
-;; NUEVO START
-; antes de machacar el registro B habría que añadir al puntero el offset_y necesario
-;ld b, 0								; la parte alta del offset va a cero, la parte baja viene en c resultado de hacer 3 desplazamientos a la derecha >>>
-
-; primero a por la parte NNN
-ld a, b								; 
-srl a
-srl a
-srl a
-ld d, a
-and 7								; 00000111
-ex af, af'							; en a´ está la parte nnn
-ld a, d
+ld a, b								; SEGUNDA PARTE: la sección TT. En el registro D está el valor de la posicion Y dividida entre 8. Se pasa de nuevo al registro A
+srl a								; se desplaza a la derecha  
+srl a								; se desplaza a la derecha  
+srl a								; se desplaza a la derecha
 and 24								; 00011000
-;or 64								; 01000000 el 010 de cabecera se añade luego
-ld d, a								; guarda en el registro D el registro A que tiene el tercio 
-ld a, b								; guarda en el registro A el registro B
-and 7								; 00000111 -> el registro A está formado por 0000 0SSS
-or d								; el registro A está formado por 010T TSSS
+ld d, a								; guarda en el registro D el registro A que tiene el tercio en formato 000T T000
+
+ld a, b								; guarda en el registro A el registro B que tiene la variable posicion y con el valor inicial sin modificar
+and 7								; 00000111 -> el registro A se queda solamante con el scanline de la forma 0000 0SSS
+or d								; el registro A está formado por 000T TSSS
 ld b, a								; se copia el registro A al B para sumar luego BC a HL
 
 ;En C ya viene la columna de la manera 000C CCCC
 ex af, af'
 or c
 ld c, a
-;; NUEVO FIN
 
 ADD HL, BC							; añade al inicio de la memoria de video el offset x del sprite
 		
