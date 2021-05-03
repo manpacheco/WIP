@@ -1,5 +1,6 @@
 VRAM_ADDRESS EQU 16384
 MAX_OFFSET_X EQU 191
+MAX_OFFSET_Y EQU 191
 MAX_COLUMN_NUMBER EQU 31
 MAX_ROW_NUMBER EQU 23
 START_ATTRIBUTE_DATA EQU 22528
@@ -46,10 +47,23 @@ srl c
 srl c 		
 
 
-;;;; SEGUIR POR AQUI C VALE 17 pero al hacer los 3 desplazamientos algo se pierde: trazar
-
-
 ld hl, posicion_y					; carga el puntero a posicion_y en el registro HL
+ld b, (hl)
+ld a, MAX_OFFSET_Y
+cp b
+JP C, Ajustar_posicion_y
+JP Continuar_despues_gestionar_posicion_y
+Ajustar_posicion_y:
+ld a,2 ; 1 is the code for blue
+out (254),a
+ld a,b
+sub MAX_OFFSET_Y
+ld (hl), a
+JP Continuar_despues_gestionar_posicion_y
+
+
+
+Continuar_despues_gestionar_posicion_y:
 ld b,(hl)							; carga el valor de posicion_y en el registro B
 ld hl, VRAM_ADDRESS					; Prueba en primera linea de pantalla
 
@@ -210,4 +224,3 @@ ld a, h ; Carga el valor de H en A
 add a, $08 ; Vuelve a dejar el tercio como estaba
 ld h, a ; Carga el valor en h
 ret
-
