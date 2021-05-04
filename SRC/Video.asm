@@ -138,16 +138,35 @@ jp PrintSprite8x8AtContinuarDesdeRama
 PrintSprite8x8AtContinuar:
 LD (HL), c							; carga en la dirección apuntada por HL, teóricamente el byte de la derecha del sprite
 PrintSprite8x8AtContinuarDesdeRama:
-ex af, af'							; restaura A al valor que tenía
 DEC L								; deja L como estaba
-;INC H								; incrementa H, que significa pasar al siguiente scanline
+
+ex af, af'							; restaura A al valor que tenía
+push af								; resguarda el registro A
+ld a, h								; carga en el registro A la parte alta del puntero a VRAM
+cp %01010111						; Compara con la parte alta del tope de suelo
+jr z, Continuar_chequeo_suelo		; si no es igual , salta y sigue como si nada
+; cp %01000000						; Compara con la parte alta del tope de techo
+; jr z, Continuar_chequeo_suelo		; si no es igual , salta y sigue como si nada
+
+
+Chequeo_terminado:
+pop af								; volvemos a restaurar el registro A
 call NextScan
 INC ix								; incrementa ix, que significa pasar a la siguiente línea del sprite
 ld bc, (IteradorVertical)			; carga en b el iterador vertical
 DJNZ LoopPrintSprite8x8At 			; Decreases B and jumps to a label if not zero
-	
 ret	
 
+Continuar_chequeo_suelo:
+ld a, l								; carga el registro L en el registro A
+or %00011111						; se establecen a 1 los bits correspondientes al componente X
+cp $FF								; compara con la parte baja del tope
+jr nz, Chequeo_terminado				; si no es igual, salta y continua como si nada
+ld a,l								; si es igual, carga el registro L en el registro A
+and %00011111						; efectúa un AND para resetear el valor pero respetando el componente X
+ld l, a								; pasa el resultado al registro L
+ld h, %01000000						; resetea al mínimo valor de VRAM el registro H
+jr Chequeo_terminado				; ya se ha terminado el proceso, salto incondicional y continúa
 
 
 ;########################################################################################################

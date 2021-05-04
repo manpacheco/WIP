@@ -20,6 +20,10 @@ jr c, ScanDown 				; si hay carry significa que la tecla no estaba pulsada
 ld hl, posicion_y
 ld b, (hl)
 dec b
+ld a, b
+cp $FF
+jr z, ScanAllKeys_reset_b
+ScanAllKeys_reset_return:
 ld (hl), b
 halt
 ld a,6 ; yellow
@@ -88,3 +92,7 @@ ld a,3 ; magenta
 ScanFinally:
 out (254),a
 ret
+
+ScanAllKeys_reset_b:
+ld b, 191
+jr ScanAllKeys_reset_return
