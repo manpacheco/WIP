@@ -29,10 +29,11 @@ call insertaPrimeraColumnaMarcadorEnRegistroE
 ld hl, (posicion_x) 				; carga el puntero a posicion_x en hl
 ld a, MAX_OFFSET_X	
 cp l 								; a-l = MAX_OFFSET_X - posicion x = 175 -180
-JP NC, Max_Offset_x_Adjusted	
+JP NC, Max_Offset_x_Adjusted		; si la posición x es menor o igual al max_offset entonces salta a offset_x_ya_ajustado
 ld h, a	
 ld a, l	
-sub h 								; A=A-h 
+sub h
+dec a 								; A=A-h 
 ld (posicion_x),a	
 	
 Max_Offset_x_Adjusted:	
@@ -141,17 +142,13 @@ PrintSprite8x8AtContinuarDesdeRama:
 DEC L								; deja L como estaba
 
 ex af, af'							; restaura A al valor que tenía
-push af								; resguarda el registro A
 ld a, h								; carga en el registro A la parte alta del puntero a VRAM
 cp %01010111						; Compara con la parte alta del tope de suelo
 jr z, Continuar_chequeo_suelo		; si no es igual , salta y sigue como si nada
-; cp %01000000						; Compara con la parte alta del tope de techo
-; jr z, Continuar_chequeo_suelo		; si no es igual , salta y sigue como si nada
 
-
-Chequeo_terminado:
-pop af								; volvemos a restaurar el registro A
+Chequeo_casi_terminado:
 call NextScan
+Chequeo_terminado:
 INC ix								; incrementa ix, que significa pasar a la siguiente línea del sprite
 ld bc, (IteradorVertical)			; carga en b el iterador vertical
 DJNZ LoopPrintSprite8x8At 			; Decreases B and jumps to a label if not zero
@@ -161,7 +158,7 @@ Continuar_chequeo_suelo:
 ld a, l								; carga el registro L en el registro A
 or %00011111						; se establecen a 1 los bits correspondientes al componente X
 cp $FF								; compara con la parte baja del tope
-jr nz, Chequeo_terminado				; si no es igual, salta y continua como si nada
+jr nz, Chequeo_casi_terminado				; si no es igual, salta y continua como si nada
 ld a,l								; si es igual, carga el registro L en el registro A
 and %00011111						; efectúa un AND para resetear el valor pero respetando el componente X
 ld l, a								; pasa el resultado al registro L

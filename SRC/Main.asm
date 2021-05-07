@@ -7,9 +7,9 @@ call 3503
 
 ld a,1 ; 1 is the code for blue
 out (254),a
-ld a,1
+ld a,185
 ld (posicion_x),a
-ld a, 0
+ld a, 100
 ld (posicion_y),a
 
 
@@ -19,6 +19,7 @@ call printScoreboard
 MainLoop:
 call PrintSprite8x8At
 call ScanAllKeys
+
 jr MainLoop
 
 ret
