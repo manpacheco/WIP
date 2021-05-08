@@ -59,6 +59,7 @@ ld a,2 ; 1 is the code for blue
 out (254),a
 ld a,b
 sub MAX_OFFSET_Y
+dec a ;;; NUEVO
 ld (hl), a
 JP Continuar_despues_gestionar_posicion_y
 
@@ -93,13 +94,21 @@ or c
 ld c, a
 
 ADD HL, BC							; añade al inicio de la memoria de video el offset x del sprite
-		
+
+
+ld ix, estado_sprite
+ld a, (ix)
+add a,a
+add a,a
+add a,a
 LD ix, Spritemap8x8 				; carga en IX la direccion del mapa de sprites
-LD b, 8								; carga en B las 8 iteraciones del tamaño vertical
-		
-		
-		
+ld c,a
+ld b,0
+add ix, bc
+LD b, 8			
+	
 LoopPrintSprite8x8At:		
+							; carga en B las 8 iteraciones del tamaño vertical
 ld (IteradorVertical), bc		
 ld a, (Offset_X)					; carga en A el offset_x
 LD d, (ix)							; carga en d el byte de la memoria en la direccion apuntada por ix (los datos del sprite)

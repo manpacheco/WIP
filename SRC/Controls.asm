@@ -69,7 +69,7 @@ ScanLeft:
 ld bc, ROW_YUIOP			; en BC se carga la dirección completa donde está la fila del teclado
 in a,(c)					; a la instrucción IN solo se le pasa la parte explicitamente el registro C porque la parte que está en el registro B ya está implícita
 bit 1,a						; nos quedamos con el valor del 2º bit más bajo
-jr nz, NothingPressed		; si no es cero significa que la tecla no estaba pulsada
+jr nz, ScanFire		; si no es cero significa que la tecla no estaba pulsada
 ld hl, posicion_x 			
 ld b, (hl)
 ld a, 0
@@ -84,10 +84,34 @@ ld (hl), b
 ScanLeftMergeBranches:
 halt
 ld a,7 ; blanco
+
+
+ScanFire:
+ld bc, ROW_BNM_SymbolShift_Space
+in a, (c)
+rra
+jr c, NothingPressed
+
+ld hl, estado_sprite
+ld a, (hl)
+inc a
+ld b, 16
+cp b
+jr nz, ScanFireContinue 
+xor a
+
+ScanFireContinue :
+ld (hl), a
+ld a,5 ; cyan
 jr ScanFinally
+
+
 
 NothingPressed:
 ld a,3 ; magenta
+
+
+
 
 ScanFinally:
 out (254),a
