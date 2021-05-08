@@ -19,6 +19,7 @@ call printScoreboard
 MainLoop:
 call PrintSprite8x8At
 call ScanAllKeys
+call MoveShip
 
 jr MainLoop
 

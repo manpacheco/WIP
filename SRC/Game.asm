@@ -1,5 +1,7 @@
 posicion_x: db 0
 posicion_y: db 0
+inercia_x: db 0
+inercia_y: db 0
 estado_sprite: db 0
 
 ;########################################################################################################
@@ -30,3 +32,22 @@ inc b											; incrementa el contador de filas
 cp b											; compara el contador con el máximo
 jr NC, printScoreIterateRows					; si no se ha sobrepasado, entonce salta de nuevo al bucle
 ret
+
+MoveShip:
+ld hl, inercia_x
+ld a, (hl)
+cp 0
+ret z
+ld hl, posicion_x
+ld b, (hl)
+add a, b
+cp a, MAX_OFFSET_X
+jr C, MoveShip_resetea_X
+MoveShip_continuar_X:
+ld (hl), b
+ret
+
+MoveShip_resetea_X:
+ld b,0
+jr MoveShip_continuar_X
+
