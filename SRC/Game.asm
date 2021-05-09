@@ -1,7 +1,7 @@
 posicion_x: db 0
 posicion_y: db 0
-inercia_x: db 0
-inercia_y: db 0
+inercia_x: db INERCIA_NEUTRAL
+inercia_y: db INERCIA_NEUTRAL
 estado_sprite: db 0
 
 ;########################################################################################################
@@ -33,21 +33,66 @@ cp b											; compara el contador con el máximo
 jr NC, printScoreIterateRows					; si no se ha sobrepasado, entonce salta de nuevo al bucle
 ret
 
-MoveShip:
-ld hl, inercia_x
-ld a, (hl)
-cp 0
+MoveShip_X:
+;push hl
+;push af
+;push bc
+
+ld hl, inercia_x 								; carga en el registro HL el puntero a la variable inercia_x
+ld a, (hl)										; carga el contenido de la variable inercia_x en el registro A
+cp INERCIA_NEUTRAL
 ret z
-ld hl, posicion_x
-ld b, (hl)
+
+jr C, MoveShip_X_inercia_negativa				; si hay carry (la inercia es menor que la neutral) salta a negativa
+jr NZ, MoveShip_X_inercia_positiva
+;si no: inercia neutra
+
+MoveShip_X_inercia_negativa:
+ld hl, posicion_x 								; carga en el registro HL el puntero a la variable posicion_x
+ld b, (hl) 										; carga el contenido de la variable posicion_x en el registro B
 add a, b
-cp a, MAX_OFFSET_X
-jr C, MoveShip_resetea_X
-MoveShip_continuar_X:
-ld (hl), b
+sub INERCIA_NEUTRAL
+jr NC, MoveShip_fin
+add a, MAX_OFFSET_X
+jr MoveShip_fin
+
+MoveShip_X_inercia_positiva:
+ld hl, posicion_x 								; carga en el registro HL el puntero a la variable posicion_x
+ld b, (hl) 										; carga el contenido de la variable posicion_x en el registro B
+add a, b
+sub INERCIA_NEUTRAL
+jr NC, MoveShip_fin
+sub MAX_OFFSET_X
+jr MoveShip_fin
+
+MoveShip_fin:
+ld (hl), a										; carga en la variable apuntada por HL que supuestamente debe de ser la posicion_x, el nuevo valor que está en A
+;pop bc
+;pop af
+;pop hl
 ret
 
-MoveShip_resetea_X:
-ld b,0
-jr MoveShip_continuar_X
+;Rota la nave a la derecha
+RotateRight:
+ld hl, estado_sprite
+ld a, (hl)
+inc a
+ld b, TOTAL_NUMBER_ROTATIONS
+cp b
+jr nz, RotateRightContinue 
+xor a
+RotateRightContinue:
+ld (hl), a
+ret
 
+;Rota la nave a la izquierda
+RotateLeft:
+ld hl, estado_sprite
+ld a, (hl)
+cp 0
+jr nz, RotateLeftContinue 
+ld a, TOTAL_NUMBER_ROTATIONS
+RotateLeftContinue:
+dec a
+ld (hl), a
+ret
