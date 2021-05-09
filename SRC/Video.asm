@@ -55,8 +55,8 @@ cp b
 JP C, Ajustar_posicion_y
 JP Continuar_despues_gestionar_posicion_y
 Ajustar_posicion_y:
-ld a,2 ; 1 is the code for blue
-out (254),a
+;ld a,2 ; 1 is the code for blue
+;out (254),a
 ld a,b
 sub MAX_OFFSET_Y
 dec a ;;; NUEVO

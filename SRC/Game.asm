@@ -1,6 +1,6 @@
 posicion_x: db 0
 posicion_y: db 0
-inercia_x: db INERCIA_NEUTRAL
+inercia_x: db INERCIA_NEUTRAL-16
 inercia_y: db INERCIA_NEUTRAL
 estado_sprite: db 0
 
@@ -40,7 +40,11 @@ MoveShip_X:
 
 ld hl, inercia_x 								; carga en el registro HL el puntero a la variable inercia_x
 ld a, (hl)										; carga el contenido de la variable inercia_x en el registro A
-cp INERCIA_NEUTRAL
+srl a
+srl a
+srl a
+srl a
+cp INERCIA_NEUTRAL_AJUSTADA
 ret z
 
 jr C, MoveShip_X_inercia_negativa				; si hay carry (la inercia es menor que la neutral) salta a negativa
@@ -51,7 +55,7 @@ MoveShip_X_inercia_negativa:
 ld hl, posicion_x 								; carga en el registro HL el puntero a la variable posicion_x
 ld b, (hl) 										; carga el contenido de la variable posicion_x en el registro B
 add a, b
-sub INERCIA_NEUTRAL
+sub INERCIA_NEUTRAL_AJUSTADA
 jr NC, MoveShip_fin
 add a, MAX_OFFSET_X
 jr MoveShip_fin
@@ -60,7 +64,7 @@ MoveShip_X_inercia_positiva:
 ld hl, posicion_x 								; carga en el registro HL el puntero a la variable posicion_x
 ld b, (hl) 										; carga el contenido de la variable posicion_x en el registro B
 add a, b
-sub INERCIA_NEUTRAL
+sub INERCIA_NEUTRAL_AJUSTADA
 jr NC, MoveShip_fin
 sub MAX_OFFSET_X
 jr MoveShip_fin
