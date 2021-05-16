@@ -23,7 +23,7 @@ ASCII_CARACTER_7		EQU 55
 ASCII_CARACTER_8		EQU 56
 ASCII_CARACTER_9		EQU 57
 
-; Print_ASCII: hace pop de la pila e imprime el caracter
+; Print_ASCII: lee el caracter del registro b y lleva el contador en el registro IX parte baja (IXL)
 Print_ASCII:
 
 LD A, 2                 ; Open Channel 2 (Screen) without clearing
