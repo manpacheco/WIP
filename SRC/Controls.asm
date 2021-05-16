@@ -6,19 +6,8 @@ ROW_GFDSA EQU 65022
 ROW_HJKL_Enter EQU 49150
 ROW_VCXZ_CapsShift EQU 65278
 ROW_BNM_SymbolShift_Space EQU 32766
-TOTAL_NUMBER_ROTATIONS EQU 16
-;INERCIA_MAX_NEGATIVA EQU 1
-;INERCIA_NEUTRAL EQU 4
-;INERCIA_MAX_POSITIVA EQU 7
-INERCIA_MAX_NEGATIVA_AJUSTADA EQU 1
-INERCIA_NEUTRAL_AJUSTADA EQU 4
-INERCIA_MAX_POSITIVA_AJUSTADA EQU 7
-INERCIA_MAX_NEGATIVA EQU 16
-INERCIA_NEUTRAL EQU 64 ; %100000
-INERCIA_MAX_POSITIVA EQU 112 ; %1110000
 
 ScanAllKeys:
-
 ; ##########################################################
 ; ####################     UP       ########################
 ; ##########################################################
@@ -27,16 +16,17 @@ ld bc, ROW_TREWQ 			; en BC se carga la dirección completa donde está la fila 
 in a,(c) 					; a la instrucción IN solo se le pasa la parte explicitamente el registro C porque la parte que está en el registro B ya está implícita
 rra 						; nos quedamos con el valor del bit más bajo
 jr c, ScanDown 				; si hay carry significa que la tecla no estaba pulsada
-ld hl, posicion_y
-ld b, (hl)
-dec b
-ld a, b
-cp $FF
-jr z, ScanAllKeys_reset_b
+;;ld hl, posicion_y
+;;ld b, (hl)
+;;dec b
+;;ld a, b
+;;cp $FF
+;;jr z, ScanAllKeys_reset_b
 ScanAllKeys_reset_return:
-ld (hl), b
+;;ld (hl), b
+ld b, 1
+call Aumenta_inercia_x
 halt
-ld a,6 ; yellow
 ; jr ScanFinally
 
 
@@ -48,10 +38,12 @@ ld bc, ROW_GFDSA			; en BC se carga la dirección completa donde está la fila d
 in a,(c)					; a la instrucción IN solo se le pasa la parte explicitamente el registro C porque la parte que está en el registro B ya está implícita
 rra							; nos quedamos con el valor del bit más bajo
 jr c, ScanRight				; si hay carry significa que la tecla no estaba pulsada
-ld hl, posicion_y 		
-ld b, (hl)
-inc b
-ld (hl), b
+;;ld hl, posicion_y 		
+;;ld b, (hl)
+;;inc b
+;;ld (hl), b
+ld b, 1
+call Disminuye_inercia_x
 halt
 ;jr ScanFinally
 
@@ -107,6 +99,7 @@ jr c, NothingPressed
 
 ;call MoveShip_X
 ;call MoveShip_Y
+call Print_number
 jr ScanFinally
 
 NothingPressed:

@@ -1,6 +1,16 @@
+TOTAL_NUMBER_ROTATIONS EQU 16
+;INERCIA_MAX_NEGATIVA EQU 1
+;INERCIA_NEUTRAL EQU 4
+;INERCIA_MAX_POSITIVA EQU 7
+INERCIA_MAX_NEGATIVA_AJUSTADA EQU 1
+INERCIA_NEUTRAL_AJUSTADA EQU 4
+INERCIA_MAX_POSITIVA_AJUSTADA EQU 7
+INERCIA_MAX_NEGATIVA EQU 16
+INERCIA_NEUTRAL EQU 64 ; %100000
+INERCIA_MAX_POSITIVA EQU 112 ; %1110000
 posicion_x: db 0
 posicion_y: db 0
-inercia_x: db INERCIA_NEUTRAL-16
+inercia_x: db INERCIA_NEUTRAL
 inercia_y: db INERCIA_NEUTRAL
 estado_sprite: db 0
 
@@ -46,8 +56,9 @@ srl a
 srl a
 cp INERCIA_NEUTRAL_AJUSTADA
 ret z
-
+push af
 jr C, MoveShip_X_inercia_negativa				; si hay carry (la inercia es menor que la neutral) salta a negativa
+pop af
 jr NZ, MoveShip_X_inercia_positiva
 ;si no: inercia neutra
 
@@ -100,3 +111,33 @@ RotateLeftContinue:
 dec a
 ld (hl), a
 ret
+
+; Aumenta la inercia X 
+; el incremento se espera que venga en el registro B
+Aumenta_inercia_x:
+ld hl, inercia_x
+ld a, (hl)
+add a, b
+cp INERCIA_MAX_POSITIVA
+jr C, Aumenta_inercia_x_Ajustar
+ld (hl), a
+ret
+Aumenta_inercia_x_Ajustar:
+ld (hl), INERCIA_MAX_POSITIVA
+ret
+; FIN ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Disminuye la inercia X 
+; el decremento se espera que venga en el registro B
+Disminuye_inercia_x:
+ld hl, inercia_x
+ld a, (hl)
+sub b
+cp INERCIA_MAX_NEGATIVA
+jr C, Disminuye_inercia_x_Ajustar
+ld (hl), a
+ret
+Disminuye_inercia_x_Ajustar:
+ld (hl), INERCIA_MAX_NEGATIVA
+ret
+; FIN ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

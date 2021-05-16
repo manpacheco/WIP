@@ -16,11 +16,17 @@ ld (posicion_y),a
 ;ld bc, $0009 ; 
 
 call printScoreboard
+call Print_number
 MainLoop:
 call PrintSprite8x8At
 call ScanAllKeys
 call MoveShip_X
 
+ld b, 8
+halt
+Delay:
+
+DJNZ Delay
 jr MainLoop
 
 ret
@@ -29,5 +35,6 @@ include "Game.asm"
 include "Video.asm"
 include "Sprite.asm"
 include "Controls.asm"
+include "Display.asm"
 
 end Main
