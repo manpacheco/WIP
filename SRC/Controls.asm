@@ -27,6 +27,7 @@ ScanAllKeys_reset_return:
 ld b, 1
 call Aumenta_inercia_x
 halt
+call Print_number
 ; jr ScanFinally
 
 
@@ -45,6 +46,7 @@ jr c, ScanRight				; si hay carry significa que la tecla no estaba pulsada
 ld b, 1
 call Disminuye_inercia_x
 halt
+call Print_number
 ;jr ScanFinally
 
 ; ##########################################################
@@ -91,6 +93,9 @@ call RotateLeft
 ;ScanLeftMergeBranches:
 halt
 
+; ##########################################################
+; ###################     FIRE       #######################
+; ##########################################################
 ScanFire:
 ld bc, ROW_BNM_SymbolShift_Space
 in a, (c)
@@ -99,7 +104,7 @@ jr c, NothingPressed
 
 ;call MoveShip_X
 ;call MoveShip_Y
-call Print_number
+;call Print_number
 jr ScanFinally
 
 NothingPressed:

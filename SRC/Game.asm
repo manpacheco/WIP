@@ -1,7 +1,4 @@
 TOTAL_NUMBER_ROTATIONS EQU 16
-;INERCIA_MAX_NEGATIVA EQU 1
-;INERCIA_NEUTRAL EQU 4
-;INERCIA_MAX_POSITIVA EQU 7
 INERCIA_MAX_NEGATIVA_AJUSTADA EQU 1
 INERCIA_NEUTRAL_AJUSTADA EQU 4
 INERCIA_MAX_POSITIVA_AJUSTADA EQU 7
@@ -43,10 +40,11 @@ cp b											; compara el contador con el máximo
 jr NC, printScoreIterateRows					; si no se ha sobrepasado, entonce salta de nuevo al bucle
 ret
 
+
+;########################################################################################################
+;###################################### MoveShip_X ######################################################
+;########################################################################################################
 MoveShip_X:
-;push hl
-;push af
-;push bc
 
 ld hl, inercia_x 								; carga en el registro HL el puntero a la variable inercia_x
 ld a, (hl)										; carga el contenido de la variable inercia_x en el registro A
@@ -119,7 +117,7 @@ ld hl, inercia_x
 ld a, (hl)
 add a, b
 cp INERCIA_MAX_POSITIVA
-jr C, Aumenta_inercia_x_Ajustar
+jr NC, Aumenta_inercia_x_Ajustar
 ld (hl), a
 ret
 Aumenta_inercia_x_Ajustar:

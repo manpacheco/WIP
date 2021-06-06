@@ -16,11 +16,28 @@ ld (posicion_y),a
 ;ld bc, $0009 ; 
 
 call printScoreboard
+ld hl, inercia_x
+ld a, (hl)
 call Print_number
 MainLoop:
 call PrintSprite8x8At
 call ScanAllKeys
+
+ld hl, inercia_x
+ld a, (hl)
+cp 32
+jr c, RESET_LOOP_SAFE
+
 call MoveShip_X
+jr RESET_LOOP_SAFE_2
+RESET_LOOP_SAFE:
+halt
+nop
+call MoveShip_X
+nop
+halt
+
+RESET_LOOP_SAFE_2:
 
 ld b, 8
 halt
