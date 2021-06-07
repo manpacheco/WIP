@@ -54,9 +54,7 @@ srl a
 srl a
 cp INERCIA_NEUTRAL_AJUSTADA
 ret z
-push af
 jr C, MoveShip_X_inercia_negativa				; si hay carry (la inercia es menor que la neutral) salta a negativa
-pop af
 jr NZ, MoveShip_X_inercia_positiva
 ;si no: inercia neutra
 
