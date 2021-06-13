@@ -4,12 +4,14 @@ INERCIA_NEUTRAL_AJUSTADA EQU 4
 INERCIA_MAX_POSITIVA_AJUSTADA EQU 7
 INERCIA_MAX_NEGATIVA EQU 16
 INERCIA_NEUTRAL EQU 64 ; %100000
-INERCIA_MAX_POSITIVA EQU 112 ; %1110000
+;INERCIA_MAX_POSITIVA EQU 112 ; %0111 0000
+INERCIA_MAX_POSITIVA EQU 126  ; %0111 1110
 posicion_x: db 0
 posicion_y: db 0
 inercia_x: db INERCIA_NEUTRAL
 inercia_y: db INERCIA_NEUTRAL
 estado_sprite: db 0
+
 
 ;########################################################################################################
 ;################################### printScoreboard ####################################################
@@ -108,10 +110,30 @@ dec a
 ld (hl), a
 ret
 
-; Aumenta la inercia X 
+;########################################################################################################
+;################################### Aumenta_inercia_x ##################################################
+;########################################################################################################
+; Aumenta la inercia x
 ; el incremento se espera que venga en el registro B
 Aumenta_inercia_x:
 ld hl, inercia_x
+jr Aumenta_inercia_generica
+
+;########################################################################################################
+;################################### Aumenta_inercia_y ##################################################
+;########################################################################################################
+; Aumenta la inercia Y
+; el incremento se espera que venga en el registro B
+Aumenta_inercia_y:
+ld hl, inercia_y
+jr Aumenta_inercia_generica
+
+;########################################################################################################
+;############################### Aumenta_inercia_generica ###############################################
+;########################################################################################################
+; Aumenta la inercia generica
+; el incremento se espera que venga en el registro B
+Aumenta_inercia_generica:
 ld a, (hl)
 add a, b
 cp INERCIA_MAX_POSITIVA
@@ -121,7 +143,6 @@ ret
 Aumenta_inercia_x_Ajustar:
 ld (hl), INERCIA_MAX_POSITIVA
 ret
-; FIN ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; Disminuye la inercia X 
 ; el decremento se espera que venga en el registro B
