@@ -1,16 +1,22 @@
 TOTAL_NUMBER_ROTATIONS EQU 16
-INERCIA_MAX_NEGATIVA_AJUSTADA EQU 1
+INERCIA_MAX_NEGATIVA_AJUSTADA EQU 0
 INERCIA_NEUTRAL_AJUSTADA EQU 4
-INERCIA_MAX_POSITIVA_AJUSTADA EQU 7
-INERCIA_MAX_NEGATIVA EQU 16
+INERCIA_MAX_POSITIVA_AJUSTADA EQU 8
+INERCIA_MAX_NEGATIVA EQU 5
 INERCIA_NEUTRAL EQU 64 ; %100000
-;INERCIA_MAX_POSITIVA EQU 112 ; %0111 0000
-INERCIA_MAX_POSITIVA EQU 126  ; %0111 1110
+INERCIA_MAX_POSITIVA EQU 142 ;  %1000 1110
+SPRITE_PLANO_HACIA_ARRIBA EQU 0
+SPRITE_PLANO_HACIA_DERECHA EQU 4
+SPRITE_PLANO_HACIA_ABAJO EQU 8
+SPRITE_PLANO_HACIA_IZQUIERDA EQU 12
 posicion_x: db 0
 posicion_y: db 0
 inercia_x: db INERCIA_NEUTRAL
 inercia_y: db INERCIA_NEUTRAL
 estado_sprite: db 0
+;					0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15
+lista_inercia_x: db 0, 1, 2, 3, 4, 3, 2, 1, 0, 1, 2, 3, 4, 3, 2, 1
+lista_inercia_y: db 4, 3, 2, 1, 0, 1, 2, 3, 4, 3, 2, 1, 0, 1, 2, 3
 
 
 ;########################################################################################################
@@ -144,10 +150,26 @@ Aumenta_inercia_x_Ajustar:
 ld (hl), INERCIA_MAX_POSITIVA
 ret
 
+;########################################################################################################
+;################################# Disminuye_inercia_x ##################################################
+;########################################################################################################
 ; Disminuye la inercia X 
 ; el decremento se espera que venga en el registro B
 Disminuye_inercia_x:
 ld hl, inercia_x
+jr Disminuye_inercia_generica
+
+;########################################################################################################
+;################################# Disminuye_inercia_y ##################################################
+;########################################################################################################
+Disminuye_inercia_y:
+ld hl, inercia_y
+jr Disminuye_inercia_generica
+
+;########################################################################################################
+;############################### Disminuye_inercia_generica #############################################
+;########################################################################################################
+Disminuye_inercia_generica:
 ld a, (hl)
 sub b
 cp INERCIA_MAX_NEGATIVA
@@ -158,3 +180,60 @@ Disminuye_inercia_x_Ajustar:
 ld (hl), INERCIA_MAX_NEGATIVA
 ret
 ; FIN ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;########################################################################################################
+;################################ Acelera con orientación ###############################################
+;########################################################################################################
+Acelera:
+ld hl, estado_sprite			; carga en hl el puntero a estado_sprite
+ld e, (hl)						; carga en el registro E el contenido del registro E, supuestamente la variable estado_sprite
+ld d, 0							; carga 0 en el registro D. A aprtir de aquí tenemos el estado en DE, el byte que nos interesa en el registro E
+; primero inercia X
+Acelera_x:
+ld hl, lista_inercia_x			; carga en hl el puntero a lista_inercia_x
+add hl, de						; suma la inercia_x y la variable estado para obtener el puntero al offset
+ld b, (hl)						; el contenido del offset se carga en el registro B
+
+push af
+push bc
+push de
+push hl
+ld a, b
+call Print_inc_x_inercia		; depuración - borrar tras probar
+pop hl
+pop de
+pop bc
+pop af
+
+
+ld a, e							; el estado, supuestamente en el registro E, se pasa al registro A para hacer comparación
+cp SPRITE_PLANO_HACIA_ARRIBA 	; si está mirando en plano hacia arriba
+jr Z, Acelera_y					; no habrá aceleración x, pasa a la aceleración Y
+cp SPRITE_PLANO_HACIA_ABAJO 	; si está mirando en plano hacia abajo
+jr Z, Acelera_y					; tampoco habrá aceleración x, pasa a la aceleración Y
+
+jr C, Aumenta_inercia_x
+jr NC, Disminuir_inercia_x
+
+
+Aumentar_inercia_x:
+call Aumenta_inercia_x		; Si mira hacia la derecha, habrá que aumentar la inercia X
+jr Acelera_y
+
+Disminuir_inercia_x:
+call NC, Disminuye_inercia_x	; Si mira hacia la izquierda, habrá que disminuir la inercia X
+jr Acelera_y
+
+
+Acelera_y:
+
+ret
+
+
+
+
+
+; la inercia debe ir en el registro B
+;lista_inercia_x
+;lista_inercia_x

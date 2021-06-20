@@ -16,9 +16,8 @@ ld (posicion_y),a
 ;ld bc, $0009 ; 
 
 call printScoreboard
-ld hl, inercia_x
-ld a, (hl)
-call Print_number
+call Print_inercia
+call Print_estado
 MainLoop:
 call PrintSprite8x8At
 call ScanAllKeys

@@ -29,16 +29,18 @@ ASCII_CARACTER_9		EQU 57
 ; lee el caracter del registro b y lleva el contador en el registro IX parte baja (IXL)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Print_ASCII:
+push de
 ld ixh, c
 LD A, 2                 						; Open Channel 2 (Screen) without clearing
 CALL ROM_OPEN_CHANNEL
+pop de
 ld b, ixl
 dec ixl
 LD A, AT                						; AT control character
 RST 0x10
-LD A, 3                 						; Y
+LD A, d                 						; Y
 RST 0x10
-LD A, 28                						; X
+LD A, e                						; X
 add a, b
 RST 0x10
 LD A, INK               						; Ink colour
@@ -49,12 +51,38 @@ ld a, ixh
 RST 0x10                						; Print the character
 RET
 
+
+Print_inercia:
+ld hl, inercia_x
+ld a, (hl)
+ld d, 3											; Y=3
+ld e, 28										; X=28
+call Print_number
+ret
+
+Print_estado:
+ld hl, estado_sprite
+ld a, (hl)
+ld d, 5											; Y=3
+ld e, 28										; X=28
+call Print_number
+ret
+
+Print_inc_x_inercia:
+ld a, (hl)
+ld d, 7											; Y=3
+ld e, 28										; X=28
+call Print_number
+ret
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Print_number 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Recibe el argumento en el registro A
+; Recibe el argumento en el registro A y la posicion en DE, la posición x en el registro E y en el registro D la posicion Y
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Print_number:
+;ld d, 3											; Y=3
+;ld e, 28										; X=28
 ld ix, 0										; Usa el registro IX como contador de posición horizontal para imprimir
 call Byte_to_ASCII								; convierte el byte a ASCII, que se devuelven en las 3 posiciones accesibles de la pila
 pop bc											; saca el tercer caracter (unidades)

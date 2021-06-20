@@ -16,18 +16,14 @@ ld bc, ROW_TREWQ 			; en BC se carga la dirección completa donde está la fila 
 in a,(c) 					; a la instrucción IN solo se le pasa la parte explicitamente el registro C porque la parte que está en el registro B ya está implícita
 rra 						; nos quedamos con el valor del bit más bajo
 jr c, ScanDown 				; si hay carry significa que la tecla no estaba pulsada
-;;ld hl, posicion_y
-;;ld b, (hl)
-;;dec b
-;;ld a, b
-;;cp $FF
-;;jr z, ScanAllKeys_reset_b
+
 ScanAllKeys_reset_return:
-;;ld (hl), b
-ld b, 1
-call Aumenta_inercia_x
+
+call Acelera
+;ld b, 1
+;call Aumenta_inercia_x
 halt
-call Print_number
+call Print_inercia
 ; jr ScanFinally
 
 
@@ -46,7 +42,7 @@ jr c, ScanRight				; si hay carry significa que la tecla no estaba pulsada
 ld b, 1
 call Disminuye_inercia_x
 halt
-call Print_number
+call Print_inercia
 ;jr ScanFinally
 
 ; ##########################################################
@@ -58,13 +54,10 @@ in a,(c)					; a la instrucción IN solo se le pasa la parte explicitamente el r
 rra							; nos quedamos con el valor del bit más bajo
 jr c, ScanLeft				; si hay carry significa que la tecla no estaba pulsada
 
-;ld hl, posicion_x
-;ld b, (hl)
-;inc b
-;ld (hl), b
-;halt
+
 
 call RotateRight
+call Print_estado
 halt
 ;jr ScanFinally
 
@@ -78,19 +71,8 @@ bit 1,a						; nos quedamos con el valor del 2º bit más bajo
 jr nz, ScanFire		; si no es cero significa que la tecla no estaba pulsada
 
 call RotateLeft
+call Print_estado
 
-;ld hl, posicion_x 			
-;ld b, (hl)
-;ld a, 0
-;cp b
-;jr nz,ContinueLeft
-;ld (hl), MAX_OFFSET_X
-;jr ScanLeftMergeBranches
-
-;ContinueLeft:
-;dec b
-;ld (hl), b
-;ScanLeftMergeBranches:
 halt
 
 ; ##########################################################
