@@ -86,11 +86,11 @@ jr MoveShip_fin
 
 MoveShip_fin:
 ld (hl), a										; carga en la variable apuntada por HL que supuestamente debe de ser la posicion_x, el nuevo valor que está en A
-;pop bc
-;pop af
-;pop hl
 ret
 
+;########################################################################################################
+;###################################### RotateRight #####################################################
+;########################################################################################################
 ;Rota la nave a la derecha
 RotateRight:
 ld hl, estado_sprite
@@ -104,6 +104,9 @@ RotateRightContinue:
 ld (hl), a
 ret
 
+;########################################################################################################
+;###################################### RotateLeft ##############################@#######################
+;########################################################################################################
 ;Rota la nave a la izquierda
 RotateLeft:
 ld hl, estado_sprite
@@ -143,10 +146,10 @@ Aumenta_inercia_generica:
 ld a, (hl)
 add a, b
 cp INERCIA_MAX_POSITIVA
-jr NC, Aumenta_inercia_x_Ajustar
+jr NC, Aumenta_inercia_generica_Ajustar
 ld (hl), a
 ret
-Aumenta_inercia_x_Ajustar:
+Aumenta_inercia_generica_Ajustar:
 ld (hl), INERCIA_MAX_POSITIVA
 ret
 
@@ -173,10 +176,10 @@ Disminuye_inercia_generica:
 ld a, (hl)
 sub b
 cp INERCIA_MAX_NEGATIVA
-jr C, Disminuye_inercia_x_Ajustar
+jr C, Disminuye_inercia_generica_Ajustar
 ld (hl), a
 ret
-Disminuye_inercia_x_Ajustar:
+Disminuye_inercia_generica_Ajustar:
 ld (hl), INERCIA_MAX_NEGATIVA
 ret
 ; FIN ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -206,7 +209,6 @@ pop de
 pop bc
 pop af
 
-
 ld a, e							; el estado, supuestamente en el registro E, se pasa al registro A para hacer comparación
 cp SPRITE_PLANO_HACIA_ARRIBA 	; si está mirando en plano hacia arriba
 jr Z, Acelera_y					; no habrá aceleración x, pasa a la aceleración Y
@@ -225,13 +227,47 @@ Disminuir_inercia_x:
 call NC, Disminuye_inercia_x	; Si mira hacia la izquierda, habrá que disminuir la inercia X
 jr Acelera_y
 
-
+; en segundo lugar inercia Y
 Acelera_y:
+ld hl, lista_inercia_y			; carga en hl el puntero a lista_inercia_y
+add hl, de						; suma la inercia_y y la variable estado para obtener el puntero al offset
+ld b, (hl)						; el contenido del offset se carga en el registro B
+
+push af
+push bc
+push de
+push hl
+ld a, b
+call Print_inc_y_inercia		; depuración - borrar tras probar
+pop hl
+pop de
+pop bc
+pop af
+
+
+ld a, e							; el estado, supuestamente en el registro E, se pasa al registro A para hacer comparación
+cp SPRITE_PLANO_HACIA_IZQUIERDA	; si está mirando en plano hacia la izquierda
+jr Z, Acelera_end				; no habrá aceleración y, termina
+jr NC, Aumenta_inercia_y
+
+cp SPRITE_PLANO_HACIA_DERECHA 	; si está mirando en plano hacia derecha
+jr Z, Acelera_end				; tampoco habrá aceleración Y, termina
+jr C, Aumenta_inercia_y
+
+jr NC, Disminuir_inercia_y
+
+
+Aumentar_inercia_y:
+call Aumenta_inercia_y		; Si mira hacia la derecha, habrá que aumentar la inercia X
+jr Acelera_end
+
+Disminuir_inercia_y:
+call NC, Disminuye_inercia_y	; Si mira hacia la izquierda, habrá que disminuir la inercia X
+jr Acelera_end
+
+Acelera_end:
 
 ret
-
-
-
 
 
 ; la inercia debe ir en el registro B
