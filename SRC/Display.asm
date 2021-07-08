@@ -58,26 +58,32 @@ ld a, (hl)
 ld d, 3											; Y=3
 ld e, 28										; X=28
 call Print_number
+
+ld hl, inercia_y
+ld a, (hl)
+ld d, 5											; Y=3
+ld e, 28										; X=28
+call Print_number
 ret
 
 Print_estado:
 ld hl, estado_sprite
 ld a, (hl)
-ld d, 5											; Y=5
+ld d, 8											; Y=5
 ld e, 28										; X=28
 call Print_number
 ret
 
 Print_inc_x_inercia:
 ld a, (hl)
-ld d, 7											; Y=7
+ld d, 11										; Y=7
 ld e, 28										; X=28
 call Print_number
 ret
 
 Print_inc_y_inercia:
 ld a, (hl)
-ld d, 9											; Y=9
+ld d, 13										; Y=9
 ld e, 28										; X=28
 call Print_number
 ret

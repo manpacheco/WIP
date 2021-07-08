@@ -1,0 +1,11 @@
+Acelera					$8113
+Acelera_x				$____
+Acelera_y				$8141
+MoveShip_X ??			$____
+MoveShip_Y				$80A0
+Print_estado			$8376
+Print_inercia			$835F
+printScoreboard			$8053
+PrintSprite8x8At		$816C
+ScanAllKeys				$82F2
+

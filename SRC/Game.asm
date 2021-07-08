@@ -71,22 +71,62 @@ ld hl, posicion_x 								; carga en el registro HL el puntero a la variable pos
 ld b, (hl) 										; carga el contenido de la variable posicion_x en el registro B
 add a, b
 sub INERCIA_NEUTRAL_AJUSTADA
-jr NC, MoveShip_fin
+jr NC, MoveShip_x_fin
 add a, MAX_OFFSET_X
-jr MoveShip_fin
+jr MoveShip_x_fin
 
 MoveShip_X_inercia_positiva:
 ld hl, posicion_x 								; carga en el registro HL el puntero a la variable posicion_x
 ld b, (hl) 										; carga el contenido de la variable posicion_x en el registro B
 add a, b
 sub INERCIA_NEUTRAL_AJUSTADA
-jr NC, MoveShip_fin
+jr NC, MoveShip_x_fin
 sub MAX_OFFSET_X
-jr MoveShip_fin
+jr MoveShip_x_fin
 
-MoveShip_fin:
+MoveShip_x_fin:
 ld (hl), a										; carga en la variable apuntada por HL que supuestamente debe de ser la posicion_x, el nuevo valor que está en A
 ret
+
+;########################################################################################################
+;###################################### MoveShip_Y ######################################################
+;########################################################################################################
+MoveShip_Y:
+
+ld hl, inercia_y 								; carga en el registro HL el puntero a la variable inercia_x
+ld a, (hl)										; carga el contenido de la variable inercia_x en el registro A
+srl a
+srl a
+srl a
+srl a
+cp INERCIA_NEUTRAL_AJUSTADA
+ret z
+jr C, MoveShip_Y_inercia_negativa				; si hay carry (la inercia es menor que la neutral) salta a negativa
+jr NZ, MoveShip_Y_inercia_positiva
+;si no: inercia neutra
+
+MoveShip_Y_inercia_negativa:
+ld hl, posicion_y 								; carga en el registro HL el puntero a la variable posicion_x
+ld b, (hl) 										; carga el contenido de la variable posicion_x en el registro B
+add a, b
+sub INERCIA_NEUTRAL_AJUSTADA
+jr NC, MoveShip_y_fin
+add a, MAX_OFFSET_Y
+jr MoveShip_y_fin
+
+MoveShip_Y_inercia_positiva:
+ld hl, posicion_y 								; carga en el registro HL el puntero a la variable posicion_x
+ld b, (hl) 										; carga el contenido de la variable posicion_x en el registro B
+add a, b
+sub INERCIA_NEUTRAL_AJUSTADA
+jr NC, MoveShip_y_fin
+sub MAX_OFFSET_Y
+jr MoveShip_y_fin
+
+MoveShip_y_fin:
+ld (hl), a										; carga en la variable apuntada por HL que supuestamente debe de ser la posicion_y, el nuevo valor que está en A
+ret
+
 
 ;########################################################################################################
 ;###################################### RotateRight #####################################################
@@ -191,7 +231,7 @@ ret
 Acelera:
 ld hl, estado_sprite			; carga en hl el puntero a estado_sprite
 ld e, (hl)						; carga en el registro E el contenido del registro E, supuestamente la variable estado_sprite
-ld d, 0							; carga 0 en el registro D. A aprtir de aquí tenemos el estado en DE, el byte que nos interesa en el registro E
+ld d, 0							; carga 0 en el registro D. A partir de aquí tenemos el estado en DE, el byte que nos interesa en el registro E
 ; primero inercia X
 Acelera_x:
 ld hl, lista_inercia_x			; carga en hl el puntero a lista_inercia_x
@@ -215,7 +255,7 @@ jr Z, Acelera_y					; no habrá aceleración x, pasa a la aceleración Y
 cp SPRITE_PLANO_HACIA_ABAJO 	; si está mirando en plano hacia abajo
 jr Z, Acelera_y					; tampoco habrá aceleración x, pasa a la aceleración Y
 
-jr C, Aumenta_inercia_x
+jr C, Aumentar_inercia_x
 jr NC, Disminuir_inercia_x
 
 
@@ -248,13 +288,15 @@ pop af
 ld a, e							; el estado, supuestamente en el registro E, se pasa al registro A para hacer comparación
 cp SPRITE_PLANO_HACIA_IZQUIERDA	; si está mirando en plano hacia la izquierda
 jr Z, Acelera_end				; no habrá aceleración y, termina
-jr NC, Aumenta_inercia_y
+jr NC, Disminuir_inercia_y		; Si NO CARRY entonces debe ser 13, 14 o 15 -> disminuir inercia Y
 
 cp SPRITE_PLANO_HACIA_DERECHA 	; si está mirando en plano hacia derecha
 jr Z, Acelera_end				; tampoco habrá aceleración Y, termina
-jr C, Aumenta_inercia_y
+jr C, Disminuir_inercia_y		; Si hay CARRY entonces debe ser 0,1,2 o 3 -> disminuir inercia
 
-jr NC, Disminuir_inercia_y
+jr NC, Aumentar_inercia_y		; Si NO CARRY entonces debería ser 5,6,7,8,9,10,11,12,13,14,15
+; pero ya hemos descartado 0,1,2,3,4,12,13, 14, 15
+; por lo tanto realmente debe ser 5,6,7,8,9,10,11
 
 
 Aumentar_inercia_y:
@@ -262,7 +304,7 @@ call Aumenta_inercia_y		; Si mira hacia la derecha, habrá que aumentar la inerc
 jr Acelera_end
 
 Disminuir_inercia_y:
-call NC, Disminuye_inercia_y	; Si mira hacia la izquierda, habrá que disminuir la inercia X
+call Disminuye_inercia_y	; Si mira hacia la izquierda, habrá que disminuir la inercia X
 jr Acelera_end
 
 Acelera_end:

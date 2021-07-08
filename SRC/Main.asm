@@ -22,6 +22,7 @@ MainLoop:
 call PrintSprite8x8At
 call ScanAllKeys
 call MoveShip_X
+call MoveShip_Y
 ld b, 8
 halt
 jr MainLoop
